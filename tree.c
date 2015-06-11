@@ -1,12 +1,13 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include "tree.h"
 
-int isEmpty(tree T)
+int isEmpty(tree *T)
 {
     return T == NULL;
 }
 
-tree left(tree T)
+void * left(tree *T)
 {
     if(isEmpty(T))
         return NULL;
@@ -14,7 +15,7 @@ tree left(tree T)
         return T->left;
 }
 
-tree right(tree T)
+void * right(tree *T)
 {
     if(isEmpty(T))
         return NULL;
@@ -23,7 +24,7 @@ tree right(tree T)
 }
 
 //Si c'est une feuille
-int isLeave(tree T)
+int isLeave(tree *T)
 {
     if(isEmpty(T))
         return 0;
@@ -34,13 +35,13 @@ int isLeave(tree T)
 }
 
 //Si c'est un noeud interne
-int isInternalNode(tree T)
+int isInternalNode(tree *T)
 {
     return !isLeave(T);
 }
 
 //Hauteur d'un arbre
-unsigned height(tree T)
+unsigned height(tree *T)
 {
     if(isEmpty(T))
         return 0;
@@ -54,7 +55,7 @@ unsigned max (unsigned a, unsigned b)
 }
 
 //Nombre de noeuds
-unsigned nbNode(tree T)
+unsigned nbNode(tree *T)
 {
     if(isEmpty(T))
         return 0;
@@ -63,7 +64,7 @@ unsigned nbNode(tree T)
 }
 
 //Nombre de feuilles
-unsigned nbLeaves(tree T)
+unsigned nbLeaves(tree *T)
 {
     if(isEmpty(T))
         return 0;
@@ -74,7 +75,7 @@ unsigned nbLeaves(tree T)
 }
 
 //Nombre de noeuds internes
-unsigned nbInternalNode(tree T)
+unsigned nbInternalNode(tree *T)
 {
     if(isEmpty(T))
         return 0;
@@ -82,4 +83,64 @@ unsigned nbInternalNode(tree T)
         return 0;
     else
         return 1 + nbInternalNode(left(T)) + nbInternalNode(right(T));
+}
+
+//Création d'un arbre
+void * create(int val, tree *ls, tree *rs)
+{
+    tree *res;
+    res = malloc(sizeof(tree));
+
+    if(res == NULL)
+    {
+        fprintf(stderr, "Impossible d'allouer le noeud");
+        return NULL;
+    }
+
+    res->value = val;
+    res->left = ls;
+    res->right = rs;
+
+    return res;
+}
+
+//Ajouter un élément
+void addElt(tree *src, int val)
+{
+    if(src == NULL)
+    {
+        src = create(val, NULL, NULL);
+    }
+    else if(isEmpty(left(src)))
+    {
+        src->left = create(val, NULL, NULL);
+    }
+    else if(isEmpty(right(src)))
+    {
+        src->right = create(val, NULL, NULL);
+    }
+    else
+    {
+        addElt(left(src), val);
+    }
+}
+
+//Ajouter un noeud de la bonne maniere
+void insertSearchTree(tree *src, int val)
+{
+    if (isEmpty(src))
+    {
+        src = create(val, NULL, NULL);
+    }
+    else
+    {
+        if(val < src->value)
+        {
+            insertSearchTree(left(src), val);
+        }
+        else
+        {
+            insertSearchTree(right(src), val);
+        }
+    }
 }
